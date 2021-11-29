@@ -13,7 +13,7 @@ export default function Signup() {
             'first_name': firstNameRef.current.value,
             'last_name': lastNameRef.current.value,
             'email': emailRef.current.value,
-            'passsword': passwordRef.current.value,
+            'password': passwordRef.current.value,
         }
 
         axios.post('api/v1/user/create', data)
@@ -28,7 +28,6 @@ export default function Signup() {
             <input ref={lastNameRef} type="text" placeholder="Last name" />
             
             <input ref={emailRef} type="text" placeholder="Email" />
-            <div className="form-text d-none">Error</div>
 
             <input ref={passwordRef} type="password" placeholder="Password" />
             <input ref={confirmPasswordRef} type="password" placeholder="Confirm password" />
