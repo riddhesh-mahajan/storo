@@ -8,24 +8,30 @@ const REGION ='eu-west-3';
 const ACCESS_KEY ='AKIA3PCFA2NHZ3DIQNY3';
 const SECRET_ACCESS_KEY ='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';
 
+
 AWS.config.update({
     accessKeyId: ACCESS_KEY, 
     secretAccessKey: SECRET_ACCESS_KEY, 
-    region: 'eu-west-3',
+    region: REGION,
     bucket: S3_BUCKET
 });
 var s3 = new AWS.S3();
 
 const Dashboard = () => {
     var re = /(?:\.([^.]+))?$/;
-
+    
     const [progress , setProgress] = useState(0);
+    const [prefix , setPrefix] = useState('');
     const [filesAndFolders , setFilesAndFolders] = useState([]);
     const [selectedFile, setSelectedFile] = useState(null);
 
     useEffect(() => {
-        loadFilesAndFolders()
+        loadFilesAndFolders();
     }, [])
+
+    useEffect(() => {
+        loadFilesAndFolders()
+    }, [prefix])
 
     const handleFileInput = (e) => {
         setSelectedFile(e.target.files[0]);
@@ -45,22 +51,46 @@ const Dashboard = () => {
             })
             .send((err) => {
                 if (err) console.log(err)
+
+                loadFilesAndFolders();
+            });
+    }
+
+    const createFolder = (folderName) => {
+        const params = {
+            ACL: 'public-read',
+            Body: '',
+            Bucket: S3_BUCKET,
+            Key: prefix.concat(folderName.concat('/'))
+        };
+
+        s3.putObject(params)
+            .on('httpUploadProgress', (evt) => {
+                setProgress(Math.round((evt.loaded / evt.total) * 100))
             })
+            .send((err) => {
+                if (err) console.log(err)
+
+                loadFilesAndFolders();
+            });
     }
 
     function loadFilesAndFolders(){
         var params = { 
             Bucket: S3_BUCKET,
             Delimiter: '',
-            Prefix: ''
+            Prefix: prefix
         }
            
         s3.listObjects(params, function (err, data) {
             if(err)throw err;
-            console.log(data);
 
             setFilesAndFolders(data.Contents);
         });
+    }
+
+    const openFolder = (folderPath) => {
+        setPrefix(prefix.concat(folderPath));
     }
 
     return (
@@ -70,17 +100,18 @@ const Dashboard = () => {
         <button onClick={() => uploadFile(selectedFile)}> Upload to S3</button>
 
         <button onClick={() => loadFilesAndFolders()}>Load files</button>
+        <button onClick={() => createFolder('Z2')}>Create folder</button>
 
         <h1>Folders</h1>
         <div className="row gx-4 gy-4">
             {
                 // Folders
                 filesAndFolders.map((file)=>{
-                    if(file.Key.includes('/') && !file.Key.includes('.')){
+                    if(file.Key.replace(prefix,'').includes('/') && !file.Key.replace(prefix,'').includes('.')){
                         return (
-                            <div className="col-2" key={uuidv4()}>
+                            <div className="col-2" key={uuidv4()} onClick={()=>{openFolder(file.Key)}}>
                                 <FileIcon extension="Folder" fold={false} />
-                                <p className="p-2 overflow_word_break">{file.Key}</p>
+                                <p className="p-2 overflow_word_break">{file.Key.replace(prefix, '')}</p>
                             </div>
                         )
                     }
@@ -93,11 +124,11 @@ const Dashboard = () => {
             {
                 // Files
                 filesAndFolders.map((file)=>{
-                    if(!file.Key.includes('/')){
+                    if(!file.Key.replace(prefix,'').includes('/') && file.Key.includes('.')){
                         return (
                             <div className="col-2" key={uuidv4()}>
                                 <FileIcon extension={re.exec(file.Key)[1]} color="#f542d4" />
-                                <p className="p-2 overflow_word_break">{file.Key}</p>
+                                <p className="p-2 overflow_word_break">{file.Key.replace(prefix, '')}</p>
                             </div>
                         )
                     }
