@@ -1,4 +1,4 @@
-import React ,{useState, useEffect} from 'react';
+import React ,{useState, useEffect, useRef} from 'react';
 import AWS from 'aws-sdk'
 import { FileIcon, defaultStyles } from 'react-file-icon';
 import { v4 as uuidv4 } from 'uuid';
@@ -20,6 +20,9 @@ var s3 = new AWS.S3();
 const Dashboard = () => {
     var re = /(?:\.([^.]+))?$/;
     
+    const folderNameRef = useRef()
+    const closeModalBtnRef = useRef()
+
     const [progress , setProgress] = useState(0);
     const [prefix , setPrefix] = useState('');
     const [filesAndFolders , setFilesAndFolders] = useState([]);
@@ -27,7 +30,6 @@ const Dashboard = () => {
 
     useEffect(() => {
         loadFilesAndFolders();
-        console.log("aaa/".split('/'));
     }, [])
 
     useEffect(() => {
@@ -57,7 +59,9 @@ const Dashboard = () => {
             });
     }
 
-    const createFolder = (folderName) => {
+    const createFolder = () => {
+        const folderName = folderNameRef.current.value;
+
         const params = {
             ACL: 'public-read',
             Body: '',
@@ -73,6 +77,8 @@ const Dashboard = () => {
                 if (err) console.log(err)
 
                 loadFilesAndFolders();
+                
+                closeModalBtnRef.current.click();
             });
     }
 
@@ -96,12 +102,37 @@ const Dashboard = () => {
 
     return (
     <div className="container">
+        <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+        Launch demo modal
+        </button>
+
+        <div className="modal fade" id="exampleModal" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div className="modal-dialog">
+                <div className="modal-content">
+                <div className="modal-header">
+                    <h5 className="modal-title" id="exampleModalLabel">Create folder</h5>
+                    <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div className="modal-body">
+                    <input ref={folderNameRef} type="text" className="form-control" placeholder="Folder name" />
+                </div>
+                <div className="modal-footer">
+                    <button ref={closeModalBtnRef} type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" className="btn btn-primary" onClick={() => createFolder()}>Create folder</button>
+                </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
         <div>Native SDK File Upload Progress is {progress}%</div>
         <input type="file" onChange={handleFileInput}/>
         <button onClick={() => uploadFile(selectedFile)}> Upload to S3</button>
 
         <button onClick={() => loadFilesAndFolders()}>Load files</button>
-        <button onClick={() => createFolder('Z2')}>Create folder</button>
 
         <h3>{prefix}</h3>
         
