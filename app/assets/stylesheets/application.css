@@ -13,3 +13,7 @@
  *= require_tree .
  *= require_self
  */
+
+ .overflow_word_break{
+    overflow-wrap: break-word;
+ }
