@@ -128,10 +128,13 @@ const Dashboard = () => {
                 // Files
                 filesAndFolders.map((file)=>{
                     if(!file.Key.replace(prefix,'').includes('/') && file.Key.includes('.')){
+                        const fileAWSLink = "https://storo.s3.eu-west-3.amazonaws.com/" + file.Key;
                         return (
                             <div className="col-2" key={uuidv4()}>
-                                <FileIcon extension={re.exec(file.Key)[1]} color="#f542d4" />
-                                <p className="p-2 overflow_word_break">{file.Key.replace(prefix, '')}</p>
+                                <a href={fileAWSLink}>
+                                    <FileIcon extension={re.exec(file.Key)[1]} color="#f542d4" />
+                                    <p className="p-2 overflow_word_break">{file.Key.replace(prefix, '')}</p>
+                                </a>
                             </div>
                         )
                     }
