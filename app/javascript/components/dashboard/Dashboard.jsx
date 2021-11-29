@@ -43,7 +43,7 @@ const Dashboard = () => {
             ACL: 'public-read',
             Body: file,
             Bucket: S3_BUCKET,
-            Key: file.name
+            Key: prefix + file.name
         };
 
         s3.putObject(params)
