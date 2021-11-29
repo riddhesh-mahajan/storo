@@ -27,6 +27,7 @@ const Dashboard = () => {
 
     useEffect(() => {
         loadFilesAndFolders();
+        console.log("aaa/".split('/'));
     }, [])
 
     useEffect(() => {
@@ -102,12 +103,14 @@ const Dashboard = () => {
         <button onClick={() => loadFilesAndFolders()}>Load files</button>
         <button onClick={() => createFolder('Z2')}>Create folder</button>
 
+        <h3>{prefix}</h3>
+        
         <h1>Folders</h1>
         <div className="row gx-4 gy-4">
             {
                 // Folders
                 filesAndFolders.map((file)=>{
-                    if(file.Key.replace(prefix,'').includes('/') && !file.Key.replace(prefix,'').includes('.')){
+                    if(file.Key.replace(prefix,'').split('/').length == 2 && !file.Key.replace(prefix,'').includes('.')){
                         return (
                             <div className="col-2" key={uuidv4()} onClick={()=>{openFolder(file.Key)}}>
                                 <FileIcon extension="Folder" fold={false} />
