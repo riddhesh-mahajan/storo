@@ -27,7 +27,7 @@ const Dashboard = () => {
     const [progress , setProgress] = useState(0);
     const [prefix , setPrefix] = useState('');
     const [filesAndFolders , setFilesAndFolders] = useState([]);
-    const [selectedFile, setSelectedFile] = useState(null);
+    const [selectedFiles, setSelectedFiles] = useState([]);
 
     useEffect(() => {
         loadFilesAndFolders();
@@ -38,26 +38,28 @@ const Dashboard = () => {
     }, [prefix])
 
     const handleFileInput = (e) => {
-        setSelectedFile(e.target.files[0]);
+        setSelectedFiles(e.target.files);
     }
 
-    const uploadFile = (file) => {
-        const params = {
-            ACL: 'public-read',
-            Body: file,
-            Bucket: S3_BUCKET,
-            Key: prefix + file.name
+    const uploadFile = (files) => {
+        for (const file of files) {
+            const params = {
+                ACL: 'public-read',
+                Body: file,
+                Bucket: S3_BUCKET,
+                Key: prefix + file.name
+            };
+    
+            s3.putObject(params)
+                .on('httpUploadProgress', (evt) => {
+                    setProgress(Math.round((evt.loaded / evt.total) * 100))
+                })
+                .send((err) => {
+                    if (err) console.log(err)
+    
+                    loadFilesAndFolders();
+                }); 
         };
-
-        s3.putObject(params)
-            .on('httpUploadProgress', (evt) => {
-                setProgress(Math.round((evt.loaded / evt.total) * 100))
-            })
-            .send((err) => {
-                if (err) console.log(err)
-
-                loadFilesAndFolders();
-            });
     }
 
     const createFolder = () => {
@@ -131,10 +133,10 @@ const Dashboard = () => {
             <div className="progress-bar" role="progressbar" style={{width: progress + '%'}}></div>
         </div>
 
-        <input ref={fileInputRef} type="file" onChange={handleFileInput} className="d-none"/>
+        <input ref={fileInputRef} type="file" multiple="multiple" onChange={handleFileInput} className="d-none"/>
 
         <button className="btn btn-primary me-2" onClick={()=>{fileInputRef.current.click();}}>Select file</button>
-        <button className="btn btn-primary" onClick={() => uploadFile(selectedFile)}> Upload to S3</button>
+        <button className="btn btn-primary" onClick={() => uploadFile(selectedFiles)}> Upload to S3</button>
 
         <h3>{prefix}</h3>
         
