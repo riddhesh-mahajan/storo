@@ -22,6 +22,7 @@ const Dashboard = () => {
     
     const folderNameRef = useRef()
     const closeModalBtnRef = useRef()
+    const fileInputRef = useRef()
 
     const [progress , setProgress] = useState(0);
     const [prefix , setPrefix] = useState('');
@@ -101,10 +102,8 @@ const Dashboard = () => {
     }
 
     return (
-    <div className="container">
-        <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
-        Launch demo modal
-        </button>
+    <div className="container col-7">
+        <p className="text-center fw-bold display-3 p-3">Storo</p>
 
         <div className="modal fade" id="exampleModal" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div className="modal-dialog">
@@ -125,18 +124,31 @@ const Dashboard = () => {
         </div>
 
 
+        
 
+        <div>Upload Progress is {progress}%</div>
+        <div className="progress mb-2">
+            <div className="progress-bar" role="progressbar" style={{width: progress + '%'}}></div>
+        </div>
 
+        <input ref={fileInputRef} type="file" onChange={handleFileInput} className="d-none"/>
 
-        <div>Native SDK File Upload Progress is {progress}%</div>
-        <input type="file" onChange={handleFileInput}/>
-        <button onClick={() => uploadFile(selectedFile)}> Upload to S3</button>
-
-        <button onClick={() => loadFilesAndFolders()}>Load files</button>
+        <button className="btn btn-primary me-2" onClick={()=>{fileInputRef.current.click();}}>Select file</button>
+        <button className="btn btn-primary" onClick={() => uploadFile(selectedFile)}> Upload to S3</button>
 
         <h3>{prefix}</h3>
         
-        <h1>Folders</h1>
+        <br /><br />
+
+        <div className="d-flex align-items-center mb-4">
+            <p className="me-4 mb-0 pb-0 fs-2 fw-bold">Folders</p>
+            <button type="button" className="btn btn-primary" style={{borderRadius: '100px'}} data-bs-toggle="modal" data-bs-target="#exampleModal">
+            <span className="fw-bold">+</span>
+            </button>
+        </div>
+        
+
+
         <div className="row gx-4 gy-4">
             {
                 // Folders
@@ -144,8 +156,7 @@ const Dashboard = () => {
                     if(file.Key.replace(prefix,'').split('/').length == 2 && !file.Key.replace(prefix,'').includes('.')){
                         return (
                             <div className="col-2" key={uuidv4()} onClick={()=>{openFolder(file.Key)}}>
-                                <FileIcon extension="Folder" fold={false} />
-                                <p className="p-2 overflow_word_break">{file.Key.replace(prefix, '')}</p>
+                                <FileIcon extension={file.Key.replace(prefix, '').replace('/', '')} fold={false} />
                             </div>
                         )
                     }
@@ -153,8 +164,11 @@ const Dashboard = () => {
             }
         </div>
 
+        <br /><br />
+
         <div className="row gx-4 gy-4">
-            <h1>Files</h1>
+            <p className="me-4 mb-0 pb-0 fs-2 fw-bold">Files</p>
+
             {
                 // Files
                 filesAndFolders.map((file)=>{
@@ -172,6 +186,8 @@ const Dashboard = () => {
                 })
             }
         </div>
+
+        <br /><br />
     </div>
     )
 }
