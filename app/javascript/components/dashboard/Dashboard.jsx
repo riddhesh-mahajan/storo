@@ -22,7 +22,7 @@ const Dashboard = () => {
     const fileInputRef = useRef()
 
     const [progress , setProgress] = useState([]);
-    const [prefix , setPrefix] = useState('');
+    const [prefix , setPrefix] = useState(localStorage.getItem('user_id') + '/');
     const [filesAndFolders , setFilesAndFolders] = useState([]);
     const [selectedFiles, setSelectedFiles] = useState([]);
 

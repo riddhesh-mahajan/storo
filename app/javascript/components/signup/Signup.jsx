@@ -25,7 +25,7 @@ export default function Signup() {
             ACL: 'public-read',
             Body: '',
             Bucket: S3_BUCKET,
-            Key: folderName
+            Key: folderName.concat('/')
         };
 
         s3.putObject(params)
