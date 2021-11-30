@@ -24,7 +24,7 @@ const Dashboard = () => {
     const closeModalBtnRef = useRef()
     const fileInputRef = useRef()
 
-    const [progress , setProgress] = useState(0);
+    const [progress , setProgress] = useState([]);
     const [prefix , setPrefix] = useState('');
     const [filesAndFolders , setFilesAndFolders] = useState([]);
     const [selectedFiles, setSelectedFiles] = useState([]);
@@ -38,21 +38,33 @@ const Dashboard = () => {
     }, [prefix])
 
     const handleFileInput = (e) => {
-        setSelectedFiles(e.target.files);
+        const selectedFiles = e.target.files;
+        setSelectedFiles(selectedFiles);
+        
+        const tempProgress = [];
+        for (var i = 0; i < selectedFiles.length; i++) {
+            tempProgress.push(0);
+        }
+        setProgress(tempProgress)
     }
 
     const uploadFile = (files) => {
-        for (const file of files) {
+        for (var i=0; i < files.length; i++) {
             const params = {
                 ACL: 'public-read',
-                Body: file,
+                Body: files[i],
                 Bucket: S3_BUCKET,
-                Key: prefix + file.name
+                Key: prefix + files[i].name
             };
     
+            const tempIndex = i;
+
             s3.putObject(params)
                 .on('httpUploadProgress', (evt) => {
-                    setProgress(Math.round((evt.loaded / evt.total) * 100))
+                    setProgress(prevProgress=>{
+                        prevProgress[tempIndex] = Math.round((evt.loaded / evt.total) * 100)
+                        return prevProgress
+                    })
                 })
                 .send((err) => {
                     if (err) console.log(err)
@@ -73,9 +85,6 @@ const Dashboard = () => {
         };
 
         s3.putObject(params)
-            .on('httpUploadProgress', (evt) => {
-                setProgress(Math.round((evt.loaded / evt.total) * 100))
-            })
             .send((err) => {
                 if (err) console.log(err)
 
@@ -126,12 +135,26 @@ const Dashboard = () => {
         </div>
 
 
-        
+        {
+            progress.map((indivisualFileProgress, index)=>{
+                const fileName = selectedFiles[index].name;
 
-        <div>Upload Progress is {progress}%</div>
-        <div className="progress mb-2">
-            <div className="progress-bar" role="progressbar" style={{width: progress + '%'}}></div>
-        </div>
+                return (
+                    <div key={uuidv4()} className="shadow-sm bg-white p-2 rounded border mb-3">
+                        <p className="mb-1">{fileName}</p>
+
+                        <div className="d-flex align-items-center">
+                            <div className="progress mb-2 flex-fill">
+                                <div className="progress-bar" role="progressbar" style={{width: indivisualFileProgress + '%'}}></div>
+                            </div>
+                            <p className="fs-6 ms-2">{indivisualFileProgress}%</p>
+                        </div>
+                        
+                    </div>
+                )
+            })
+        }
+        
 
         <input ref={fileInputRef} type="file" multiple="multiple" onChange={handleFileInput} className="d-none"/>
 
@@ -140,7 +163,7 @@ const Dashboard = () => {
 
         <h3>{prefix}</h3>
         
-        <br /><br />
+        <br />
 
         <div className="d-flex align-items-center mb-4">
             <p className="me-4 mb-0 pb-0 fs-2 fw-bold">Folders</p>
@@ -166,7 +189,7 @@ const Dashboard = () => {
             }
         </div>
 
-        <br /><br />
+        <br />
 
         <div className="row gx-4 gy-4">
             <p className="me-4 mb-0 pb-0 fs-2 fw-bold">Files</p>
