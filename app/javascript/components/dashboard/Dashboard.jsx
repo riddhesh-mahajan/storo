@@ -2,11 +2,7 @@ import React ,{useState, useEffect, useRef} from 'react';
 import AWS from 'aws-sdk'
 import { FileIcon, defaultStyles } from 'react-file-icon';
 import { v4 as uuidv4 } from 'uuid';
-
-const S3_BUCKET ='storo';
-const REGION ='eu-west-3';
-const ACCESS_KEY ='AKIA3PCFA2NHZ3DIQNY3';
-const SECRET_ACCESS_KEY ='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';
+import {S3_BUCKET, REGION, ACCESS_KEY, SECRET_ACCESS_KEY} from '../aws/config'
 
 
 AWS.config.update({
@@ -15,6 +11,7 @@ AWS.config.update({
     region: REGION,
     bucket: S3_BUCKET
 });
+
 var s3 = new AWS.S3();
 
 const Dashboard = () => {

@@ -1,5 +1,17 @@
 import React, {useRef} from 'react'
 import axios from 'axios';
+import {S3_BUCKET, REGION, ACCESS_KEY, SECRET_ACCESS_KEY} from '../aws/config'
+import AWS from 'aws-sdk'
+
+
+AWS.config.update({
+    accessKeyId: ACCESS_KEY, 
+    secretAccessKey: SECRET_ACCESS_KEY, 
+    region: REGION,
+    bucket: S3_BUCKET
+});
+
+var s3 = new AWS.S3();
 
 export default function Signup() {
     const firstNameRef = useRef('')
@@ -7,6 +19,24 @@ export default function Signup() {
     const emailRef = useRef('')
     const passwordRef = useRef('')
     const confirmPasswordRef = useRef('')
+
+    function createFolder(folderName) {
+        const params = {
+            ACL: 'public-read',
+            Body: '',
+            Bucket: S3_BUCKET,
+            Key: folderName
+        };
+
+        s3.putObject(params)
+            .send((err) => {
+                if (err) console.log(err)
+            });
+    }
+
+    function setupStorage(userId){
+        createFolder(userId);
+    }
 
     function signup(){
         const data = {
@@ -17,7 +47,10 @@ export default function Signup() {
         }
 
         axios.post('api/v1/user/create', data)
-        .then(response => console.log(response));
+        .then((response) => {
+            console.log(response)
+            setupStorage(response.data.id.toString());
+        });
     }
 
     return (
