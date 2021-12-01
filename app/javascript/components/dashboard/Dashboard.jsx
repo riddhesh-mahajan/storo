@@ -21,6 +21,9 @@ const Dashboard = () => {
     const closeModalBtnRef = useRef()
     const fileInputRef = useRef()
 
+    var foldersExist = 0;
+    var filesExist = 0;
+
     const [progress , setProgress] = useState([]);
     const [prefix , setPrefix] = useState(localStorage.getItem('user_id') + '/');
     const [filesAndFolders , setFilesAndFolders] = useState([]);
@@ -100,7 +103,8 @@ const Dashboard = () => {
            
         s3.listObjects(params, function (err, data) {
             if(err)throw err;
-
+            foldersExist = 0;
+            filesExist = 0;
             setFilesAndFolders(data.Contents);
         });
     }
@@ -110,7 +114,7 @@ const Dashboard = () => {
     }
 
     return (
-    <div className="container col-7">
+    <div className="container col-6">
         <p className="text-center fw-bold display-3 p-3">Storo</p>
 
         <div className="modal fade" id="exampleModal" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -135,20 +139,21 @@ const Dashboard = () => {
         {
             progress.map((indivisualFileProgress, index)=>{
                 const fileName = selectedFiles[index].name;
+                if(indivisualFileProgress != 100){
+                    return (
+                        <div key={uuidv4()} className="shadow-sm bg-white p-2 rounded border mb-3">
+                            <p className="mb-1">{fileName}</p>
 
-                return (
-                    <div key={uuidv4()} className="shadow-sm bg-white p-2 rounded border mb-3">
-                        <p className="mb-1">{fileName}</p>
-
-                        <div className="d-flex align-items-center">
-                            <div className="progress mb-2 flex-fill">
-                                <div className="progress-bar" role="progressbar" style={{width: indivisualFileProgress + '%'}}></div>
+                            <div className="d-flex align-items-center">
+                                <div className="progress mb-2 flex-fill">
+                                    <div className="progress-bar" role="progressbar" style={{width: indivisualFileProgress + '%'}}></div>
+                                </div>
+                                <p className="fs-6 ms-2">{indivisualFileProgress}%</p>
                             </div>
-                            <p className="fs-6 ms-2">{indivisualFileProgress}%</p>
+                            
                         </div>
-                        
-                    </div>
-                )
+                    )
+                }
             })
         }
         
@@ -157,9 +162,8 @@ const Dashboard = () => {
 
         <button className="btn btn-primary me-2" onClick={()=>{fileInputRef.current.click();}}>Select file</button>
         <button className="btn btn-primary" onClick={() => uploadFile(selectedFiles)}> Upload to S3</button>
-
-        <h3>{prefix}</h3>
-        
+      
+        <br />
         <br />
 
         <div className="d-flex align-items-center mb-4">
@@ -169,13 +173,13 @@ const Dashboard = () => {
             </button>
         </div>
         
-
-
         <div className="row gx-4 gy-4">
             {
                 // Folders
                 filesAndFolders.map((file)=>{
                     if(file.Key.replace(prefix,'').split('/').length == 2 && !file.Key.replace(prefix,'').includes('.')){
+                        foldersExist = 1;
+                        
                         return (
                             <div className="col-2" key={uuidv4()} onClick={()=>{openFolder(file.Key)}}>
                                 <FileIcon extension={file.Key.replace(prefix, '').replace('/', '')} fold={false} />
@@ -184,6 +188,17 @@ const Dashboard = () => {
                     }
                 })
             }
+
+        {(() => {          
+            if(foldersExist == 0){
+                return (
+                    <div className="ms-2 border rounded col-12">
+                        <p className="m-2 text-center">No Folders Found</p>
+                    </div>
+                )
+            }   
+         })()}
+
         </div>
 
         <br />
@@ -196,6 +211,8 @@ const Dashboard = () => {
                 filesAndFolders.map((file)=>{
                     if(!file.Key.replace(prefix,'').includes('/') && file.Key.includes('.')){
                         const fileAWSLink = "https://storo.s3.eu-west-3.amazonaws.com/" + file.Key;
+                        filesExist = 1;
+
                         return (
                             <div className="col-2" key={uuidv4()}>
                                 <a href={fileAWSLink}>
@@ -207,6 +224,16 @@ const Dashboard = () => {
                     }
                 })
             }
+
+        {(() => {          
+            if(filesExist == 0){
+                return (
+                    <div className="ms-2 border rounded col-12">
+                        <p className="m-2 text-center">No Files Found</p>
+                    </div>
+                )
+            }   
+         })()}
         </div>
 
         <br /><br />
