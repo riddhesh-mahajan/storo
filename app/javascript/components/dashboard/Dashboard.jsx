@@ -110,6 +110,7 @@ const Dashboard = () => {
     }
 
     const openFolder = (folderPath) => {
+        setFilesAndFolders([])
         setPrefix(prefix.concat(folderPath));
     }
 
