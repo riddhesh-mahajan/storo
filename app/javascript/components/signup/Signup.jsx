@@ -1,8 +1,9 @@
-import React, {useRef} from 'react'
+import React, {useRef, useState} from 'react'
 import axios from 'axios';
 import {S3_BUCKET, REGION, ACCESS_KEY, SECRET_ACCESS_KEY} from '../aws/config'
 import AWS from 'aws-sdk'
-
+import { v4 as uuidv4 } from 'uuid';
+import { useNavigate, Link } from "react-router-dom";
 
 AWS.config.update({
     accessKeyId: ACCESS_KEY, 
@@ -19,6 +20,9 @@ export default function Signup() {
     const emailRef = useRef('')
     const passwordRef = useRef('')
     const confirmPasswordRef = useRef('')
+
+    const [errorMessages, setErrorMessages] = useState([])
+    const navigate = useNavigate();
 
     function createFolder(folderName) {
         const params = {
@@ -49,23 +53,51 @@ export default function Signup() {
         axios.post('api/v1/user/create', data)
         .then((response) => {
             console.log(response)
-            setupStorage(response.data.id.toString());
+            if(response.status == 201) {
+                setupStorage(response.data.id.toString())
+                navigate('/login')
+            };
+            
+        }).catch(function (error) {
+            console.log('AAA')
+            console.log(error.response.data)
+            const keys = Object.keys(error.response.data);
+            console.log(keys);
+            const tempErrorMessages = [];
+
+            keys.forEach(key => {
+                tempErrorMessages.push(key + ' ' + error.response.data[key])
+                
+            });
+
+            setErrorMessages(tempErrorMessages);
+            console.log(tempErrorMessages)
         });
     }
 
     return (
-        <div>
-            <h1>Signup</h1>
+        <div className="d-flex align-items-center flex-column" style={{minHeight: '100vh'}}>
+            <div className="col-4 mt-5">
+                <p className="display-5 text-center mb-4 fw-bold">Signup</p>
 
-            <input ref={firstNameRef} type="text" placeholder="First name" />
-            <input ref={lastNameRef} type="text" placeholder="Last name" />
-            
-            <input ref={emailRef} type="text" placeholder="Email" />
+                <input ref={firstNameRef} type="text" placeholder="First name" className="form-control mb-1" />
+                
+                <input ref={lastNameRef} type="text" placeholder="Last name" className="form-control mb-1"/>
 
-            <input ref={passwordRef} type="password" placeholder="Password" />
-            <input ref={confirmPasswordRef} type="password" placeholder="Confirm password" />
+                <input ref={emailRef} type="text" placeholder="Email" className="form-control mb-1"/>
 
-            <button onClick={signup}>Signup</button>
+                <input ref={passwordRef} type="password" placeholder="Password" className="form-control mb-1"/>
+                <input ref={confirmPasswordRef} type="password" placeholder="Confirm password" className="form-control mb-1"/>
+
+                
+                {
+                    errorMessages.map((error)=>{
+                        return (<p key={uuidv4()} className="mb-1 text-danger">{error}</p>)
+                    })
+                }
+                
+                <button onClick={signup} className="btn btn-primary col-12 mt-3">Signup</button>
+            </div>
         </div>
     )
 }
