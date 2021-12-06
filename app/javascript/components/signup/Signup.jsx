@@ -77,7 +77,7 @@ export default function Signup() {
 
     return (
         <div className="d-flex align-items-center flex-column" style={{minHeight: '100vh'}}>
-            <div className="col-4 mt-5">
+            <div className="col-md-3 col-11 mt-5">
                 <p className="display-5 text-center mb-4 fw-bold">Signup</p>
 
                 <input ref={firstNameRef} type="text" placeholder="First name" className="form-control mb-1" />

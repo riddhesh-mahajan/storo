@@ -115,7 +115,7 @@ const Dashboard = () => {
     }
 
     return (
-    <div className="container col-6">
+    <div className="container col-md-6 col-11">
         <p className="text-center fw-bold display-3 p-3">Storo</p>
 
         <div className="modal fade" id="exampleModal" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -161,9 +161,11 @@ const Dashboard = () => {
 
         <input ref={fileInputRef} type="file" multiple="multiple" onChange={handleFileInput} className="d-none"/>
 
-        <button className="btn btn-primary me-2" onClick={()=>{fileInputRef.current.click();}}>Select file</button>
-        <button className="btn btn-primary" onClick={() => uploadFile(selectedFiles)}> Upload to S3</button>
-      
+
+        <button className="btn btn-primary col-12 mb-2" onClick={()=>{fileInputRef.current.click();}}>Select file</button>
+        <button className="btn btn-primary col-12" onClick={() => uploadFile(selectedFiles)}> Upload to S3</button>
+
+        
         <br />
         <br />
 
@@ -182,7 +184,7 @@ const Dashboard = () => {
                         foldersExist = 1;
                         
                         return (
-                            <div className="col-2" key={uuidv4()} onClick={()=>{openFolder(file.Key)}}>
+                            <div className="col-md-2 col-4" key={uuidv4()} onClick={()=>{openFolder(file.Key)}}>
                                 <FileIcon extension={file.Key.replace(prefix, '').replace('/', '')} fold={false} />
                             </div>
                         )
@@ -215,7 +217,7 @@ const Dashboard = () => {
                         filesExist = 1;
 
                         return (
-                            <div className="col-2" key={uuidv4()}>
+                            <div className="col-md-2 col-4" key={uuidv4()}>
                                 <a href={fileAWSLink}>
                                     <FileIcon extension={re.exec(file.Key)[1]} color="#f542d4" />
                                     <p className="p-2 overflow_word_break">{file.Key.replace(prefix, '')}</p>

@@ -28,7 +28,7 @@ export default function Home() {
             </nav>
 
             <div style={{minHeight: '80vh'}} className="row">
-                <div className="col-6 d-flex flex-column align-items-center justify-content-center">
+                <div className="col-md-6 col-11 d-flex flex-column align-items-center justify-content-center">
                     <div className="col-9">
                         <p className="display-2 fw-bold">Easy, Secure and Scalable storage</p>
                         <p>Store, share, and collaborate on files and folders from any mobile device, tablet, or computer</p>
@@ -36,7 +36,7 @@ export default function Home() {
                     </div>
                 </div>
 
-                <div className="col-6">
+                <div className="col-md-6 d-none d-md-block">
                     <img src="https://riddhesh-mahajan-dev.s3.eu-west-3.amazonaws.com/illustrations/Data+maintenance_Two+Color.svg" alt="" className="col-12" />
                 </div>
             </div>
