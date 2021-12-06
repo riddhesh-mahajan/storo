@@ -1,6 +1,9 @@
 class Api::V1::UserController < ApplicationController
+    skip_before_action :verify_authenticity_token
+    
     def create
         @user = User.new(user_params)
+        puts(params)
 
         if @user.save
             render json: @user, status: :created
