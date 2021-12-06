@@ -21,7 +21,7 @@ export default function Login() {
             console.log(response.status);
 
             if(response.status == 200){
-                localStorage.setItem("user_id", response.data.id);
+                localStorage.setItem("jwt", response.data);
                 navigate('/dashboard')
             }
         }).catch(function (error) {

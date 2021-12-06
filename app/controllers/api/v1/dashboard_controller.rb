@@ -1,7 +1,2 @@
-class Api::V1::DashboardController < ActionController::API
-    def upload
-        
-        render json: {}, status: :created
-        
-    end
+class Api::V1::DashboardController < ApplicationController
 end

@@ -1,4 +1,4 @@
-class Api::V1::UserController < ActionController::API
+class Api::V1::UserController < ApplicationController
     def create
         @user = User.new(user_params)
 
@@ -13,7 +13,7 @@ class Api::V1::UserController < ActionController::API
         @matchedUser = User.find_by(email: params['email'], password: params['password'])
 
         if @matchedUser
-            render json: @matchedUser, status: :ok
+            render json: JWT.encode(@matchedUser.to_json.delete("password"), hmac_secret(), 'HS256'), status: :ok
         else
             render json: {}, status: :forbidden
         end

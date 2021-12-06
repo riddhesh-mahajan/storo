@@ -5,8 +5,6 @@ Rails.application.routes.draw do
     namespace :v1 do
       get '/user/login', to: 'user#login'
       post '/user/create', to: 'user#create'
-
-      post '/file/upload', to: 'dashboard#upload'
     end
   end
   
