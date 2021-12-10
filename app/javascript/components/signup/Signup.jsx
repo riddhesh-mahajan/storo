@@ -1,9 +1,13 @@
 import React, {useRef, useState} from 'react'
 import axios from 'axios';
-import {S3_BUCKET, REGION, ACCESS_KEY, SECRET_ACCESS_KEY} from '../aws/config'
 import AWS from 'aws-sdk'
 import { v4 as uuidv4 } from 'uuid';
 import { useNavigate, Link } from "react-router-dom";
+
+const ACCESS_KEY = process.env.ACCESS_KEY
+const SECRET_ACCESS_KEY = process.env.SECRET_ACCESS_KEY
+const REGION = process.env.REGION
+const S3_BUCKET = process.env.S3_BUCKET
 
 AWS.config.update({
     accessKeyId: ACCESS_KEY, 

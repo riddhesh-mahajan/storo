@@ -2,8 +2,11 @@ import React ,{useState, useEffect, useRef} from 'react';
 import AWS from 'aws-sdk'
 import { FileIcon, defaultStyles } from 'react-file-icon';
 import { v4 as uuidv4 } from 'uuid';
-import {S3_BUCKET, REGION, ACCESS_KEY, SECRET_ACCESS_KEY} from '../aws/config'
 
+const ACCESS_KEY = process.env.ACCESS_KEY
+const SECRET_ACCESS_KEY = process.env.SECRET_ACCESS_KEY
+const REGION = process.env.REGION
+const S3_BUCKET = process.env.S3_BUCKET
 
 AWS.config.update({
     accessKeyId: ACCESS_KEY, 
@@ -94,7 +97,7 @@ const Dashboard = () => {
             });
     }
 
-    function loadFilesAndFolders(){
+    function loadFilesAndFolders(){    
         var params = { 
             Bucket: S3_BUCKET,
             Delimiter: '',
@@ -116,7 +119,7 @@ const Dashboard = () => {
 
     return (
     <div className="container col-md-6 col-11">
-        <p className="text-center fw-bold display-3 p-3">Storo</p>
+        <p className="text-center fw-bold display-3 p-3">{S3_BUCKET}</p>
 
         <div className="modal fade" id="exampleModal" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div className="modal-dialog">

@@ -6,6 +6,8 @@ import Signup from '../components/signup/Signup'
 import Dashboard from '../components/dashboard/Dashboard'
 
 export default function App() {
+    require('dotenv').config()
+    
     return (
         <HashRouter>
             <Routes>
