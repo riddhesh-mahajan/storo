@@ -1,8 +1,8 @@
 # Storo
-[![Website](https://img.shields.io/website?style=for-the-badge&up_message=live%20demo&url=https%3A%2F%2Fstoro-riddhesh.herokuapp.com%2F%23)](https://storo-riddhesh.herokuapp.com/#) &nbsp; ![GitHub repo size](https://img.shields.io/github/repo-size/riddhesh-mahajan/connect?style=for-the-badge) 
+[![Website](https://img.shields.io/website?style=for-the-badge&up_message=live%20demo&url=https%3A%2F%2Fstoro-riddhesh.herokuapp.com%2F%23)](https://storo-riddhesh.herokuapp.com/#) &nbsp; ![GitHub repo size](https://img.shields.io/github/repo-size/riddhesh-mahajan/storo?style=for-the-badge) 
 
 
-Social network built using Ruby on Rails, React and Bootstrap.
+Store on files and folders from any mobile device, tablet, or computer
 
 &emsp;
 # Prerequisites
