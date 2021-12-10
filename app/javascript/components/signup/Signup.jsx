@@ -4,21 +4,22 @@ import AWS from 'aws-sdk'
 import { v4 as uuidv4 } from 'uuid';
 import { useNavigate, Link } from "react-router-dom";
 
-const ACCESS_KEY = process.env.ACCESS_KEY
-const SECRET_ACCESS_KEY = process.env.SECRET_ACCESS_KEY
-const REGION = process.env.REGION
-const S3_BUCKET = process.env.S3_BUCKET
-
-AWS.config.update({
-    accessKeyId: ACCESS_KEY, 
-    secretAccessKey: SECRET_ACCESS_KEY, 
-    region: REGION,
-    bucket: S3_BUCKET
-});
-
-var s3 = new AWS.S3();
 
 export default function Signup() {
+    const ACCESS_KEY = process.env.ACCESS_KEY
+    const SECRET_ACCESS_KEY = process.env.SECRET_ACCESS_KEY
+    const REGION = process.env.REGION
+    const S3_BUCKET = process.env.S3_BUCKET
+
+    AWS.config.update({
+        accessKeyId: ACCESS_KEY, 
+        secretAccessKey: SECRET_ACCESS_KEY, 
+        region: REGION,
+        bucket: S3_BUCKET
+    });
+
+    var s3 = new AWS.S3();
+
     const firstNameRef = useRef('')
     const lastNameRef = useRef('')
     const emailRef = useRef('')

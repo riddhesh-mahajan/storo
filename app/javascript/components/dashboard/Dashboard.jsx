@@ -4,10 +4,21 @@ import { FileIcon, defaultStyles } from 'react-file-icon';
 import { v4 as uuidv4 } from 'uuid';
 
 
-
-var s3 = new AWS.S3();
-
 const Dashboard = () => {
+    var ACCESS_KEY = process.env.ACCESS_KEY
+    var SECRET_ACCESS_KEY = process.env.SECRET_ACCESS_KEY
+    var REGION = process.env.REGION
+    var S3_BUCKET = process.env.S3_BUCKET
+
+    AWS.config.update({
+        accessKeyId: ACCESS_KEY, 
+        secretAccessKey: SECRET_ACCESS_KEY, 
+        region: REGION,
+        bucket: S3_BUCKET
+    });
+
+    var s3 = new AWS.S3();
+
     var re = /(?:\.([^.]+))?$/;
     
     const folderNameRef = useRef()
@@ -23,18 +34,6 @@ const Dashboard = () => {
     const [selectedFiles, setSelectedFiles] = useState([]);
 
     useEffect(() => {
-        const ACCESS_KEY = process.env.ACCESS_KEY
-        const SECRET_ACCESS_KEY = process.env.SECRET_ACCESS_KEY
-        const REGION = process.env.REGION
-        const S3_BUCKET = process.env.S3_BUCKET
-
-        AWS.config.update({
-            accessKeyId: ACCESS_KEY, 
-            secretAccessKey: SECRET_ACCESS_KEY, 
-            region: REGION,
-            bucket: S3_BUCKET
-        });
-
         loadFilesAndFolders();
     }, [])
 
